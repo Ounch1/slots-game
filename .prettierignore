@@ -1,0 +1,10 @@
+# Ignore artifacts:
+build
+coverage
+package-lock.json
+src/**/*.js
+test/**/*.js
+lib/**/*.js
+dist
+*.js
+coverage/
