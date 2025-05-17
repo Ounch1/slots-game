@@ -1,29 +1,28 @@
-import { Container, Sprite, Texture } from 'pixi.js';
-
-const SYMBOL_TEXTURES = [
-	'symbol1.png',
-	'symbol2.png',
-	'symbol3.png',
-	'symbol4.png',
-	'symbol5.png',
-];
+import { Container, Resource, Sprite, Texture } from 'pixi.js';
 
 const SPIN_SPEED = 50; // Pixels per frame
 const SLOWDOWN_RATE = 0.95; // Rate at which the reel slows down
 
 export class Reel {
 	public container: Container;
+	private SYMBOL_TEXTURES: Texture<Resource>[];
 	private symbols: Sprite[];
 	private readonly symbolSize: number;
 	private readonly symbolCount: number;
 	private speed: number = 0;
 	private isSpinning: boolean = false;
 
-	constructor(symbolCount: number, symbolSize: number, symbolOffset: number) {
+	constructor(
+		symbolCount: number,
+		symbolSize: number,
+		textures: Texture<Resource>[],
+		symbolOffset: number
+	) {
 		this.container = new Container();
 		this.symbols = [];
 		this.symbolSize = symbolSize;
 		this.symbolCount = symbolCount;
+		this.SYMBOL_TEXTURES = textures;
 
 		this.createSymbols(symbolOffset);
 	}
@@ -41,9 +40,8 @@ export class Reel {
 	}
 
 	private createRandomSymbol(): Sprite {
-		const randomIndex = Math.floor(Math.random() * SYMBOL_TEXTURES.length);
-		const texture = Texture.from(SYMBOL_TEXTURES[randomIndex]);
-		return new Sprite(texture);
+		const randomIndex = Math.floor(Math.random() * this.SYMBOL_TEXTURES.length);
+		return new Sprite(this.SYMBOL_TEXTURES[randomIndex]);
 	}
 
 	public update(delta: number): void {

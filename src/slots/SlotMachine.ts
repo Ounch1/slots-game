@@ -1,8 +1,8 @@
 import * as PIXI from 'pixi.js';
 import 'pixi-spine';
 import { Reel } from './Reel';
-import { sound } from '../utils/sound';
-import { AssetLoader } from '../utils/AssetLoader';
+import { sound } from '@/utils/sound';
+import { AssetLoader } from '@/utils/AssetLoader';
 import { Spine } from 'pixi-spine';
 
 const REEL_COUNT = 4;
@@ -58,9 +58,15 @@ export class SlotMachine {
 	}
 
 	private createReels(): void {
+		const symbolTextures = AssetLoader.getTextures('symbol');
 		// Create each reel
 		for (let i = 0; i < REEL_COUNT; i++) {
-			const reel = new Reel(SYMBOLS_PER_REEL, SYMBOL_SIZE, BACKGROUND_OFFSET);
+			const reel = new Reel(
+				SYMBOLS_PER_REEL,
+				SYMBOL_SIZE,
+				symbolTextures,
+				BACKGROUND_OFFSET
+			);
 			reel.container.y = i * (REEL_HEIGHT + REEL_SPACING);
 			this.container.addChild(reel.container);
 			this.reels.push(reel);
