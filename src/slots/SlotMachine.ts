@@ -1,8 +1,8 @@
 import * as PIXI from 'pixi.js';
 import 'pixi-spine';
 import { Reel } from './Reel';
-import { sound } from '@/utils/sound';
-import { AssetLoader } from '@/utils/AssetLoader';
+import { sound } from '../utils/sound';
+import { AssetLoader } from '../utils/AssetLoader';
 import { Spine } from 'pixi-spine';
 
 const REEL_COUNT = 4;
@@ -91,7 +91,7 @@ export class SlotMachine {
 		// Disable spin button
 		if (this.spinButton) {
 			this.spinButton.texture = AssetLoader.getTexture(
-				'button_spin_disabled.png'
+				'ui/button_spin_disabled.png'
 			);
 			this.spinButton.interactive = false;
 		}
@@ -124,7 +124,7 @@ export class SlotMachine {
 
 						if (this.spinButton) {
 							this.spinButton.texture =
-								AssetLoader.getTexture('button_spin.png');
+								AssetLoader.getTexture('ui/button_spin.png');
 							this.spinButton.interactive = true;
 						}
 					}, 500);

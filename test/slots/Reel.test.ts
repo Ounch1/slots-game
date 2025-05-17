@@ -16,10 +16,50 @@ describe('Reel', () => {
 	});
 	it('positions symbols with correct x and y offsets', () => {
 		reel.container.children.forEach((symbol, i) => {
-			expect(symbol.x).toBe(symbolSize * i + symbolOffset); // 20 is your offset
+			expect(symbol.x).toBe(symbolSize * i + symbolOffset);
 			expect(symbol.y).toBe(symbolOffset);
 		});
 	});
+	it('should update symbol positions while spinning', () => {
+		reel.startSpin();
+		const xBefore = reel['symbols'].map((s) => s.x);
+		reel.update(1);
+		const xAfter = reel['symbols'].map((s) => s.x);
+		expect(xAfter).not.toEqual(xBefore);
+	});
 
-	test.todo('createRandomSymbol returns a PIXI.Sprite with a valid texture');
+	it('should slow down and stop after stopSpin', () => {
+		reel.startSpin();
+		reel.update(1);
+		reel.stopSpin();
+
+		let safetyCounter = 0;
+		while (reel['speed'] > 0 && safetyCounter < 1000) {
+			reel.update(1);
+			safetyCounter++;
+		}
+
+		expect(reel['speed']).toBe(0);
+	});
+
+	it('should snap all symbols to snapPoints', () => {
+		reel['symbols'].forEach((symbol) => (symbol.x += 50)); // Move the positions
+		reel['snapToGrid']();
+		reel['symbols'].forEach((symbol, i) => {
+			expect(symbol.x).toBeCloseTo(reel['snapPoints'][i]);
+		});
+	});
+
+	it('should wrap symbols and reorder array', () => {
+		reel.startSpin();
+
+		const rightBound =
+			reel['symbols'].length * reel['symbolSize'] - reel['symbolSize'] / 2;
+		const firstSymbol = reel['symbols'][0];
+		firstSymbol.x = rightBound + 1;
+
+		reel.update(1);
+
+		expect(reel['symbols'][0]).toBe(firstSymbol);
+	});
 });
