@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">21.73% </span>
+                <span class="strong">15.15% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>5/23</span>
+                <span class='fraction'>5/33</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">22.72% </span>
+                <span class="strong">16.12% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>5/22</span>
+                <span class='fraction'>5/31</span>
             </div>
         
             
@@ -137,10 +137,15 @@
 <a name='L72'></a><a href='#L72'>72</a>
 <a name='L73'></a><a href='#L73'>73</a>
 <a name='L74'></a><a href='#L74'>74</a>
-<a name='L75'></a><a href='#L75'>75</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -148,10 +153,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -164,19 +169,24 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -228,13 +238,15 @@ const SLOWDOWN_RATE = 0.95; // Rate at which the reel slows down
 export class Reel {
 	public container: PIXI.Container;
 	private symbols: PIXI.Sprite[];
-	private symbolSize: number;
-	private symbolCount: number;
+	private readonly symbolSize: number;
+	private readonly symbolCount: number;
 	private <span class="cstat-no" title="statement not covered" >speed: number = 0;</span>
 	private <span class="cstat-no" title="statement not covered" >isSpinning: boolean = false;</span>
 &nbsp;
-<span class="fstat-no" title="function not covered" >	constructor(s</span>ymbolCount: number, symbolSize: number) {
+<span class="fstat-no" title="function not covered" >	constructor(s</span>ymbolCount: number, symbolSize: number, symbolOffset: number) {
 <span class="cstat-no" title="statement not covered" >		this.container = new PIXI.Container();</span>
+<span class="cstat-no" title="statement not covered" >		this.container.position.x += symbolOffset;</span>
+<span class="cstat-no" title="statement not covered" >		this.container.position.y = symbolOffset;</span>
 <span class="cstat-no" title="statement not covered" >		this.symbols = [];</span>
 <span class="cstat-no" title="statement not covered" >		this.symbolSize = symbolSize;</span>
 <span class="cstat-no" title="statement not covered" >		this.symbolCount = symbolCount;</span>
@@ -243,15 +255,18 @@ export class Reel {
 	}
 &nbsp;
 	private <span class="fstat-no" title="function not covered" >createSymbols(</span>): void {
-		// Create symbols for the reel, arranged horizontally
+<span class="cstat-no" title="statement not covered" >		for (let i = <span class="cstat-no" title="statement not covered" >0;</span> i &lt; this.symbolCount; i++) {</span>
+			const symbol = <span class="cstat-no" title="statement not covered" >this.createRandomSymbol();</span>
+<span class="cstat-no" title="statement not covered" >			this.symbols.push(symbol);</span>
+<span class="cstat-no" title="statement not covered" >			this.container.addChild(symbol);</span>
+<span class="cstat-no" title="statement not covered" >			symbol.x = (this.symbolSize * i);</span>
+		}
 	}
 &nbsp;
 	private <span class="fstat-no" title="function not covered" >createRandomSymbol(</span>): PIXI.Sprite {
-		// TODO:Get a random symbol texture
-&nbsp;
-		// TODO:Create a sprite with the texture
-&nbsp;
-<span class="cstat-no" title="statement not covered" >		return new PIXI.Sprite();</span>
+		const randomIndex = <span class="cstat-no" title="statement not covered" >Math.floor(Math.random() * SYMBOL_TEXTURES.length);</span>
+		const texture = <span class="cstat-no" title="statement not covered" >PIXI.Texture.from(SYMBOL_TEXTURES[randomIndex]);</span>
+<span class="cstat-no" title="statement not covered" >		return new PIXI.Sprite(texture);</span>
 	}
 &nbsp;
 	public <span class="fstat-no" title="function not covered" >update(</span>delta: number): void {
@@ -292,7 +307,7 @@ export class Reel {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-05-16T16:25:20.115Z
+                at 2025-05-17T08:11:52.433Z
             </div>
         <script src="../prettify.js"></script>
         <script>

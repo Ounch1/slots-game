@@ -1,5 +1,4 @@
-import * as PIXI from 'pixi.js';
-import { AssetLoader } from '../utils/AssetLoader';
+import { Container, Sprite, Texture } from 'pixi.js';
 
 const SYMBOL_TEXTURES = [
 	'symbol1.png',
@@ -13,32 +12,38 @@ const SPIN_SPEED = 50; // Pixels per frame
 const SLOWDOWN_RATE = 0.95; // Rate at which the reel slows down
 
 export class Reel {
-	public container: PIXI.Container;
-	private symbols: PIXI.Sprite[];
-	private symbolSize: number;
-	private symbolCount: number;
+	public container: Container;
+	private symbols: Sprite[];
+	private readonly symbolSize: number;
+	private readonly symbolCount: number;
 	private speed: number = 0;
 	private isSpinning: boolean = false;
 
-	constructor(symbolCount: number, symbolSize: number) {
-		this.container = new PIXI.Container();
+	constructor(symbolCount: number, symbolSize: number, symbolOffset: number) {
+		this.container = new Container();
 		this.symbols = [];
 		this.symbolSize = symbolSize;
 		this.symbolCount = symbolCount;
 
-		this.createSymbols();
+		this.createSymbols(symbolOffset);
 	}
 
-	private createSymbols(): void {
-		// Create symbols for the reel, arranged horizontally
+	private createSymbols(symbolOffset: number): void {
+		for (let i = 0; i < this.symbolCount; i++) {
+			const symbol = this.createRandomSymbol();
+			this.symbols.push(symbol);
+			this.container.addChild(symbol);
+			// TODO: Make the offset apply to the container, instead of the symbols individually.
+			// Note: Ran into a problem, where offset would apply to containers X but not Y axis, will fix later.
+			symbol.x = this.symbolSize * i + symbolOffset;
+			symbol.y += symbolOffset;
+		}
 	}
 
-	private createRandomSymbol(): PIXI.Sprite {
-		// TODO:Get a random symbol texture
-
-		// TODO:Create a sprite with the texture
-
-		return new PIXI.Sprite();
+	private createRandomSymbol(): Sprite {
+		const randomIndex = Math.floor(Math.random() * SYMBOL_TEXTURES.length);
+		const texture = Texture.from(SYMBOL_TEXTURES[randomIndex]);
+		return new Sprite(texture);
 	}
 
 	public update(delta: number): void {
