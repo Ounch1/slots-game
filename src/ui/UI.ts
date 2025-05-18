@@ -20,7 +20,7 @@ export class UI {
 	private createSpinButton(): void {
 		try {
 			this.spinButton = new PIXI.Sprite(
-				AssetLoader.getTexture('button_spin.png')
+				AssetLoader.getTexture('ui/button_spin.png')
 			);
 
 			this.spinButton.anchor.set(0.5);

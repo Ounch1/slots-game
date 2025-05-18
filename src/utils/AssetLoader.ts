@@ -1,62 +1,84 @@
-import * as PIXI from 'pixi.js';
 import { sound } from './sound';
+import { Assets, Texture } from 'pixi.js';
 
 // Asset paths
-const IMAGES_PATH = 'assets/images/';
+const UI_IMAGES_PATH = 'assets/images/ui/';
+const SYMBOL_PATH = 'assets/images/symbols/';
 const SPINES_PATH = 'assets/spines/';
 const SOUNDS_PATH = 'assets/sounds/';
 
+// TODO: Implement automatic asset loading.
+// Note: Instead of adding the names manually, it should be possible to simply add files into the respective directories.
+
 // Asset lists
-const IMAGES = [
+const UI_IMAGES = [
+	'background.png',
+	'button_spin.png',
+	'button_spin_disabled.png',
+];
+
+const SYMBOL_IMAGES = [
 	'symbol1.png',
 	'symbol2.png',
 	'symbol3.png',
 	'symbol4.png',
 	'symbol5.png',
-	'background.png',
-	'button_spin.png',
-	'button_spin_disabled.png',
 ];
 
 const SPINES = ['big-boom-h.json', 'base-feature-frame.json'];
 
 const SOUNDS = ['Reel spin.webm', 'win.webm', 'Spin button.webm'];
 
-const textureCache: Record<string, PIXI.Texture> = {};
+const textureCache: Record<string, Texture> = {};
 const spineCache: Record<string, any> = {};
 
 export class AssetLoader {
 	constructor() {
-		PIXI.Assets.init({ basePath: '' });
+		Assets.init({ basePath: '' });
 	}
 
 	public async loadAssets(): Promise<void> {
 		try {
-			PIXI.Assets.addBundle(
+			Assets.addBundle(
 				'images',
-				IMAGES.map((image) => ({
-					name: image,
-					srcs: IMAGES_PATH + image,
+				UI_IMAGES.map((image) => ({
+					alias: `ui/${image}`,
+					src: UI_IMAGES_PATH + image,
 				}))
 			);
 
-			PIXI.Assets.addBundle(
+			Assets.addBundle(
+				'symbols',
+				SYMBOL_IMAGES.map((image) => ({
+					alias: `symbol/${image}`,
+					src: SYMBOL_PATH + image,
+				}))
+			);
+
+			Assets.addBundle(
 				'spines',
 				SPINES.map((spine) => ({
-					name: spine,
-					srcs: SPINES_PATH + spine,
+					alias: spine,
+					src: SPINES_PATH + spine,
 				}))
 			);
 
-			const imageAssets = await PIXI.Assets.loadBundle('images');
-			console.log('Images loaded successfully');
+			const [imageAssets, symbolAssets] = await Promise.all([
+				Assets.loadBundle('images'),
+				Assets.loadBundle('symbols'),
+			]);
 
-			for (const [key, texture] of Object.entries(imageAssets)) {
-				textureCache[key] = texture as PIXI.Texture;
+			console.log('Images and symbols loaded successfully');
+
+			for (const [key, texture] of Object.entries({
+				...imageAssets,
+				...symbolAssets,
+			})) {
+				textureCache[key] = texture as Texture;
 			}
 
 			try {
-				const spineAssets = await PIXI.Assets.loadBundle('spines');
+				const spineAssets = await Assets.loadBundle('spines');
 				console.log('Spine animations loaded successfully');
 
 				for (const [key, spine] of Object.entries(spineAssets)) {
@@ -85,8 +107,14 @@ export class AssetLoader {
 		}
 	}
 
-	public static getTexture(name: string): PIXI.Texture {
+	public static getTexture(name: string): Texture {
 		return textureCache[name];
+	}
+
+	public static getTextures(bundlePrefix: string): Texture[] {
+		return Object.entries(textureCache)
+			.filter(([key]) => key.startsWith(`${bundlePrefix}/`))
+			.map(([, texture]) => texture);
 	}
 
 	public static getSpine(name: string): any {

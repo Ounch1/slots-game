@@ -10,6 +10,7 @@ const SYMBOLS_PER_REEL = 6;
 const SYMBOL_SIZE = 150;
 const REEL_HEIGHT = SYMBOL_SIZE;
 const REEL_SPACING = 10;
+const BACKGROUND_OFFSET = -20;
 
 export class SlotMachine {
 	public container: PIXI.Container;
@@ -44,8 +45,8 @@ export class SlotMachine {
 			const background = new PIXI.Graphics();
 			background.beginFill(0x000000, 0.5);
 			background.drawRect(
-				-20,
-				-20,
+				BACKGROUND_OFFSET,
+				BACKGROUND_OFFSET,
 				SYMBOL_SIZE * SYMBOLS_PER_REEL + 40, // Width now based on symbols per reel
 				REEL_HEIGHT * REEL_COUNT + REEL_SPACING * (REEL_COUNT - 1) + 40 // Height based on reel count
 			);
@@ -57,10 +58,12 @@ export class SlotMachine {
 	}
 
 	private createReels(): void {
+		const symbolTextures = AssetLoader.getTextures('symbol');
 		// Create each reel
 		for (let i = 0; i < REEL_COUNT; i++) {
-			const reel = new Reel(SYMBOLS_PER_REEL, SYMBOL_SIZE);
-			reel.container.y = i * (REEL_HEIGHT + REEL_SPACING);
+			const reel = new Reel(SYMBOLS_PER_REEL, SYMBOL_SIZE, symbolTextures);
+			reel.container.y = i * (REEL_HEIGHT + REEL_SPACING) + BACKGROUND_OFFSET;
+			reel.container.x += BACKGROUND_OFFSET;
 			this.container.addChild(reel.container);
 			this.reels.push(reel);
 		}
@@ -84,7 +87,7 @@ export class SlotMachine {
 		// Disable spin button
 		if (this.spinButton) {
 			this.spinButton.texture = AssetLoader.getTexture(
-				'button_spin_disabled.png'
+				'ui/button_spin_disabled.png'
 			);
 			this.spinButton.interactive = false;
 		}
@@ -117,7 +120,7 @@ export class SlotMachine {
 
 						if (this.spinButton) {
 							this.spinButton.texture =
-								AssetLoader.getTexture('button_spin.png');
+								AssetLoader.getTexture('ui/button_spin.png');
 							this.spinButton.interactive = true;
 						}
 					}, 500);
