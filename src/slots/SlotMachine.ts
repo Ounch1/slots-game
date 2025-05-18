@@ -139,8 +139,13 @@ export class SlotMachine {
 			sound.play('win');
 			console.log('Winner!');
 
+
 			if (this.winAnimation) {
-				// TODO: Play the win animation found in "big-boom-h" spine
+				this.winAnimation.visible = true;
+				this.winAnimation.state.setAnimation(0, 'start', false)
+			}
+			else {
+				console.warn(`Spine ${this.winAnimation} is null`)
 			}
 		}
 	}
@@ -175,6 +180,12 @@ export class SlotMachine {
 				this.winAnimation.visible = false;
 
 				this.container.addChild(this.winAnimation);
+
+				this.winAnimation!.state.addListener({
+					complete: () => {
+						this.winAnimation!.visible = false;
+					}
+				});
 			}
 		} catch (error) {
 			console.error('Error initializing spine animations:', error);
