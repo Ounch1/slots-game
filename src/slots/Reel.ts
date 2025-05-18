@@ -106,4 +106,12 @@ export class Reel {
 		// The reel will gradually slow down in the update method
 		this.isSpinning = false;
 	}
+
+	/**
+	 * Destroy the reel
+	 */
+	public destroy(): void {
+		this.symbols.forEach(symbol => symbol.destroy());
+		this.container.destroy({ children: true, texture: true, baseTexture: true });
+	}
 }

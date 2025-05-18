@@ -5,18 +5,19 @@ import { Reel } from '../slots/Reel';
 import { sound } from '../utils/sound';
 import { AssetLoader } from '../utils/AssetLoader';
 
+export const REEL_COUNT = 4;
+export const SYMBOL_SIZE = 150;
+export const REEL_SPACING = 10;
+export const BACKGROUND_OFFSET = -20;
+export const BACKGROUND_PADDING = 40;
 const WIN_RATE = 0.3; // 30% Chance
-const REEL_COUNT = 4;
-const SYMBOLS_PER_REEL = 6;
-const SYMBOL_SIZE = 150;
-const REEL_HEIGHT = SYMBOL_SIZE;
-const REEL_SPACING = 10;
 const SPIN_DELAY = 200;
 const TOTAL_SPIN_DURATION = 500 + (REEL_COUNT - 1) * SPIN_DELAY; // REEL_COUNT-1 for delay between the reels
-const BACKGROUND_OFFSET = -20;
-const BACKGROUND_PADDING = 40;
+const SYMBOLS_PER_REEL = 6;
 
 export class SlotMachine {
+	public readonly totalReelWidth: number = SYMBOL_SIZE * SYMBOLS_PER_REEL;
+	public readonly totalReelHeight: number = SYMBOL_SIZE * REEL_COUNT + REEL_SPACING * (REEL_COUNT - 1);
 	public container: Container;
 	private app: Application;
 	private isSpinning: boolean = false;
@@ -24,9 +25,6 @@ export class SlotMachine {
 	private frameSpine: Spine | null = null;
 	private winAnimation: Spine | null = null;
 	private readonly reels: Reel[];
-	private readonly totalReelWidth: number = SYMBOL_SIZE * SYMBOLS_PER_REEL;
-	private readonly totalReelHeight: number =
-		REEL_HEIGHT * REEL_COUNT + REEL_SPACING * (REEL_COUNT - 1);
 
 	constructor(app: Application) {
 		this.app = app;
@@ -66,7 +64,7 @@ export class SlotMachine {
 		// Create each reel
 		for (let i = 0; i < REEL_COUNT; i++) {
 			const reel = new Reel(SYMBOLS_PER_REEL, SYMBOL_SIZE, symbolTextures);
-			reel.container.y = i * (REEL_HEIGHT + REEL_SPACING) + BACKGROUND_OFFSET;
+			reel.container.y = i * (SYMBOL_SIZE + REEL_SPACING) + BACKGROUND_OFFSET;
 			reel.container.x += BACKGROUND_OFFSET;
 			this.container.addChild(reel.container);
 			this.reels.push(reel);
