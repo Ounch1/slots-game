@@ -4,12 +4,16 @@ import { Texture, BaseTexture } from 'pixi.js';
 let reel: Reel;
 const symbolCount: number = 6;
 const symbolSize: number = 150;
-const dummyTextures = Array(symbolCount)
-	.fill(null)
-	.map(() => Texture.from(new BaseTexture()));
+const dummyTextures = Array(symbolCount).fill(Texture.EMPTY);
 
 beforeEach(() => {
 	reel = new Reel(symbolCount, symbolSize, dummyTextures);
+});
+
+// memory clean
+afterEach(() => {
+	reel.container.destroy({ children: true });
+	dummyTextures.forEach((texture) => texture.destroy());
 });
 
 describe('Reel', () => {

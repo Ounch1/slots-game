@@ -2,3 +2,11 @@ Reel.ts:
 - Not sure if method order is something up for refactoring, or a part of the stylistic guidelines.
 I left it as is, as following pre-existing style was one of the requirements, but I'm pretty sure the convention is:
 Public Properties -> Private Properties -> Constructor -> Public Methods -> Private Methods
+
+Potential Improvements:
+- AssetLoader should ideally load the appropriate assets from directories, instead of having to add them one by one manually. That way, scalability would be improved.
+Would implement it right now, but it would take time and isn't relevant for the test.
+- For the movement animation, it would be much better to use a tweening library, like GSAP or tween.js, as it would give more flexible control and improve clarity.
+With some research I could implement it, but just like the asset loader, it would take time and isn't relevant for what is being tested.
+- Ideally, code should be designed for Reel to both work horizontally and vertically, in case if something changes in the future, or if we want to reuse it for future projects.
+ But horizontal spinning was the only requirement.
