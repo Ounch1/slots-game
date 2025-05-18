@@ -5,7 +5,7 @@ import { Reel } from '../slots/Reel';
 import { sound } from '../utils/sound';
 import { AssetLoader } from '../utils/AssetLoader';
 
-const WIN_RATE = 1;
+const WIN_RATE = 0.3; // 30% Chance
 const REEL_COUNT = 4;
 const SYMBOLS_PER_REEL = 6;
 const SYMBOL_SIZE = 150;
@@ -115,6 +115,7 @@ export class SlotMachine {
 
 				// If this is the last reel, check for wins and enable spin button
 				if (i === this.reels.length - 1) {
+					sound.stop('Reel spin');
 					setTimeout(() => {
 						this.checkWin();
 						this.isSpinning = false;
