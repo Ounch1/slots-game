@@ -1,13 +1,15 @@
-import { Reel } from '../../src/slots/Reel';
-import { AssetLoader } from '../../src/utils/AssetLoader';
+import { Reel } from '@/slots/Reel';
+import { Texture, BaseTexture } from 'pixi.js';
 
 let reel: Reel;
 const symbolCount: number = 6;
 const symbolSize: number = 150;
-const symbolOffset: number = 20;
-const symbolTextures = AssetLoader.getTextures('symbol');
+const dummyTextures = Array(symbolCount)
+	.fill(null)
+	.map(() => Texture.from(new BaseTexture()));
+
 beforeEach(() => {
-	reel = new Reel(symbolCount, symbolSize, symbolTextures, symbolOffset);
+	reel = new Reel(symbolCount, symbolSize, dummyTextures);
 });
 
 describe('Reel', () => {
@@ -16,8 +18,8 @@ describe('Reel', () => {
 	});
 	it('positions symbols with correct x and y offsets', () => {
 		reel.container.children.forEach((symbol, i) => {
-			expect(symbol.x).toBe(symbolSize * i + symbolOffset);
-			expect(symbol.y).toBe(symbolOffset);
+			expect(symbol.x).toBe(symbolSize * i);
+			expect(symbol.y).toBe(0);
 		});
 	});
 	it('should update symbol positions while spinning', () => {
@@ -46,7 +48,7 @@ describe('Reel', () => {
 		reel['symbols'].forEach((symbol) => (symbol.x += 50)); // Move the positions
 		reel['snapToGrid']();
 		reel['symbols'].forEach((symbol, i) => {
-			expect(symbol.x).toBeCloseTo(reel['snapPoints'][i]);
+			expect(symbol.x).toBeCloseTo(i * reel['symbolSize']);
 		});
 	});
 

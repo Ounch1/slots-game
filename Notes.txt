@@ -1,0 +1,4 @@
+Reel.ts:
+- Not sure if method order is something up for refactoring, or a part of the stylistic guidelines.
+I left it as is, as following pre-existing style was one of the requirements, but I'm pretty sure the convention is:
+Public Properties -> Private Properties -> Constructor -> Public Methods -> Private Methods

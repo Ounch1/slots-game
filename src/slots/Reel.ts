@@ -2,70 +2,73 @@ import { Container, Resource, Sprite, Texture } from 'pixi.js';
 
 const SPIN_SPEED = 50; // Pixels per frame
 const SLOWDOWN_RATE = 0.95; // Rate at which the reel slows down
+const STOP_THRESHOLD = 0.5; // Speed threshold, at which movement will stop
 
 export class Reel {
+	public readonly container: Container;
+
 	private speed: number = 0;
-	public container: Container;
 	private isSpinning: boolean = false;
-	private readonly SYMBOL_TEXTURES: Texture<Resource>[];
-	private readonly symbols: Sprite[];
+
+	private readonly textures: Texture<Resource>[];
+	private readonly symbols: Sprite[] = [];
+
 	private readonly symbolSize: number;
 	private readonly symbolCount: number;
-	private readonly symbolOffset: number;
-	private readonly snapPoints: number[] = [];
 
 	constructor(
 		symbolCount: number,
 		symbolSize: number,
-		textures: Texture<Resource>[],
-		symbolOffset: number
+		textures: Texture<Resource>[]
 	) {
 		this.container = new Container();
 		this.symbols = [];
 		this.symbolSize = symbolSize;
 		this.symbolCount = symbolCount;
-		this.SYMBOL_TEXTURES = textures;
-		this.symbolOffset = symbolOffset;
+		this.textures = textures;
 
 		this.createSymbols();
+	}
 
-		for (let i = 0; i < this.symbols.length; i++) {
-			this.snapPoints[i] = i * this.symbolSize + this.symbolOffset;
-		}
+	private getSnapPosition(index: number): number {
+		return index * this.symbolSize;
 	}
 
 	private createSymbols(): void {
 		for (let i = 0; i < this.symbolCount; i++) {
 			const symbol = this.createRandomSymbol();
 			this.symbols.push(symbol);
+
+			symbol.x = this.getSnapPosition(i);
+
 			this.container.addChild(symbol);
-			// TODO: Make the offset apply to the container, instead of the symbols individually.
-			// Note: Ran into a problem, where offset would apply to containers X but not Y axis, will fix later.
-			symbol.x = this.symbolSize * i + this.symbolOffset;
-			symbol.y += this.symbolOffset;
 		}
 	}
 
 	private createRandomSymbol(): Sprite {
-		const randomIndex = Math.floor(Math.random() * this.SYMBOL_TEXTURES.length);
-		return new Sprite(this.SYMBOL_TEXTURES[randomIndex]);
+		const randomIndex = Math.floor(Math.random() * this.textures.length);
+		return new Sprite(this.textures[randomIndex]);
 	}
 
 	public update(delta: number): void {
 		if (!this.isSpinning && this.speed === 0) return;
 
-		const rightBound = this.getRightBound();
-		const totalWidth = this.getTotalWidth();
+		// For a smoother wrapping, I want the symbols to wrap when they are half-way through the bound, not all the way.
+		const rightBound =
+			this.symbols.length * this.symbolSize - this.symbolSize / 2;
+		const totalWidth = this.symbols.length * this.symbolSize;
 
 		for (let i = 0; i < this.symbols.length; i++) {
 			const symbol = this.symbols[i];
 			symbol.x += this.speed * delta;
 
+			// Wrap around logics
 			if (symbol.x > rightBound) {
 				symbol.x -= totalWidth;
 
 				this.symbols.splice(i, 1);
 				this.symbols.unshift(symbol);
+				i--; // Adjust the index
 			}
 		}
 
@@ -74,34 +77,32 @@ export class Reel {
 			this.speed *= SLOWDOWN_RATE;
 
 			// If speed is very low, stop completely and snap to grid
-			if (this.speed < 0.5) {
+			if (this.speed < STOP_THRESHOLD) {
 				this.speed = 0;
 				this.snapToGrid();
 			}
 		}
 	}
 
-	private getRightBound(): number {
-		return this.symbols.length * this.symbolSize - this.symbolSize / 2;
-	}
-
-	private getTotalWidth(): number {
-		return this.symbols.length * this.symbolSize;
-	}
-
 	private snapToGrid(): void {
 		this.symbols.forEach((symbol, i) => {
-			symbol.x = this.snapPoints[i];
+			symbol.x = this.getSnapPosition(i);
 		});
 	}
 
+	/**
+	 * Starts the reel spinning at full speed.
+	 */
 	public startSpin(): void {
 		this.isSpinning = true;
 		this.speed = SPIN_SPEED;
 	}
 
+	/**
+	 * Gradually stops the spin.
+	 */
 	public stopSpin(): void {
-		this.isSpinning = false;
 		// The reel will gradually slow down in the update method
+		this.isSpinning = false;
 	}
 }

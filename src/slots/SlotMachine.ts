@@ -61,13 +61,9 @@ export class SlotMachine {
 		const symbolTextures = AssetLoader.getTextures('symbol');
 		// Create each reel
 		for (let i = 0; i < REEL_COUNT; i++) {
-			const reel = new Reel(
-				SYMBOLS_PER_REEL,
-				SYMBOL_SIZE,
-				symbolTextures,
-				BACKGROUND_OFFSET
-			);
-			reel.container.y = i * (REEL_HEIGHT + REEL_SPACING);
+			const reel = new Reel(SYMBOLS_PER_REEL, SYMBOL_SIZE, symbolTextures);
+			reel.container.y = i * (REEL_HEIGHT + REEL_SPACING) + BACKGROUND_OFFSET;
+			reel.container.x += BACKGROUND_OFFSET;
 			this.container.addChild(reel.container);
 			this.reels.push(reel);
 		}
