@@ -66,6 +66,7 @@ export class Reel {
 			if (symbol.x > rightBound) {
 				symbol.x -= totalWidth;
 
+				// Reorder the array, last element goes into the beginning.
 				this.symbols.splice(i, 1);
 				this.symbols.unshift(symbol);
 				i--; // Adjust the index
