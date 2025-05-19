@@ -111,7 +111,11 @@ export class Reel {
 	 * Destroy the reel
 	 */
 	public destroy(): void {
-		this.symbols.forEach(symbol => symbol.destroy());
-		this.container.destroy({ children: true, texture: true, baseTexture: true });
+		this.symbols.forEach((symbol) => symbol.destroy());
+		this.container.destroy({
+			children: true,
+			texture: true,
+			baseTexture: true,
+		});
 	}
 }

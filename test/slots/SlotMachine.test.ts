@@ -1,5 +1,11 @@
 import { Application, Container, Sprite, Texture } from 'pixi.js';
-import { BACKGROUND_OFFSET, REEL_COUNT, REEL_SPACING, SlotMachine, SYMBOL_SIZE } from '@/slots/SlotMachine';
+import {
+	BACKGROUND_OFFSET,
+	REEL_COUNT,
+	REEL_SPACING,
+	SlotMachine,
+	SYMBOL_SIZE,
+} from '@/slots/SlotMachine';
 
 // Mocks
 jest.mock('@/utils/sound', () => ({
@@ -66,17 +72,22 @@ describe('SlotMachine', () => {
 
 	afterEach(() => {
 		if (slotMachine) {
-			slotMachine['reels'].forEach(reel => {
+			slotMachine['reels'].forEach((reel) => {
 				reel.destroy();
 			});
-			slotMachine.container.destroy({ children: true, texture: true, baseTexture: true });
+			slotMachine.container.destroy({
+				children: true,
+				texture: true,
+				baseTexture: true,
+			});
 		}
 		if (app) {
 			app.destroy(true, { children: true, texture: true, baseTexture: true });
 		}
 	});
 
-	it('should create correct number of reels', () => { // ensures 4 reels are initialized
+	it('should create correct number of reels', () => {
+		// ensures 4 reels are initialized
 		expect(slotMachine['reels'].length).toBe(REEL_COUNT);
 	});
 
@@ -93,7 +104,7 @@ describe('SlotMachine', () => {
 		// Verify every reel has a working update
 		const delta = 0.016;
 		slotMachine.update(delta);
-		slotMachine['reels'].forEach(reel => {
+		slotMachine['reels'].forEach((reel) => {
 			expect(reel.update).toHaveBeenCalledWith(delta);
 		});
 	});
@@ -116,8 +127,12 @@ describe('SlotMachine', () => {
 	describe('Container properties', () => {
 		it('should have correct container position', () => {
 			// Verify containers are positioned in the center
-			expect(slotMachine.container.x).toBe(app.screen.width / 2 - slotMachine.totalReelWidth / 2);
-			expect(slotMachine.container.y).toBe(app.screen.height / 2 - slotMachine.totalReelHeight / 2);
+			expect(slotMachine.container.x).toBe(
+				app.screen.width / 2 - slotMachine.totalReelWidth / 2
+			);
+			expect(slotMachine.container.y).toBe(
+				app.screen.height / 2 - slotMachine.totalReelHeight / 2
+			);
 		});
 	});
 });

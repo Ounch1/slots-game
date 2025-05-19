@@ -5,19 +5,24 @@ import { Reel } from '../slots/Reel';
 import { sound } from '../utils/sound';
 import { AssetLoader } from '../utils/AssetLoader';
 
+const WIN_RATE = 0.3; // 30% Chance
+const SYMBOLS_PER_REEL = 6;
+const DELAY_BEFORE_STOP = 500; // How long the reels spin before stopping starts
+const DELAY_BEFORE_WIN = 500; // Delay after last reel stops before checking win
+const STOP_DELAY_BETWEEN_REELS = 400; // Delay between each reel to stop spinning
+export const SPIN_DELAY = 200;
 export const REEL_COUNT = 4;
 export const SYMBOL_SIZE = 150;
 export const REEL_SPACING = 10;
 export const BACKGROUND_OFFSET = -20;
 export const BACKGROUND_PADDING = 40;
-const WIN_RATE = 0.3; // 30% Chance
-const SPIN_DELAY = 200;
-const TOTAL_SPIN_DURATION = 500 + (REEL_COUNT - 1) * SPIN_DELAY; // REEL_COUNT-1 for delay between the reels
-const SYMBOLS_PER_REEL = 6;
+export const REEL_SPIN_DURATION =
+	DELAY_BEFORE_STOP + (REEL_COUNT - 1) * SPIN_DELAY; // REEL_COUNT-1 for delay between the reels
 
 export class SlotMachine {
 	public readonly totalReelWidth: number = SYMBOL_SIZE * SYMBOLS_PER_REEL;
-	public readonly totalReelHeight: number = SYMBOL_SIZE * REEL_COUNT + REEL_SPACING * (REEL_COUNT - 1);
+	public readonly totalReelHeight: number =
+		SYMBOL_SIZE * REEL_COUNT + REEL_SPACING * (REEL_COUNT - 1);
 	public container: Container;
 	private app: Application;
 	private isSpinning: boolean = false;
@@ -30,6 +35,10 @@ export class SlotMachine {
 		this.app = app;
 		this.container = new Container();
 		this.reels = [];
+
+		// For E2E
+		(window as any).slotMachine = this;
+		(window as any).spinDuration = REEL_SPIN_DURATION; // Small buffer
 
 		// Center the slot machine
 		this.container.x = this.app.screen.width / 2 - this.totalReelWidth / 2;
@@ -103,7 +112,7 @@ export class SlotMachine {
 		// Stop all reels after a delay
 		setTimeout(() => {
 			this.stopSpin();
-		}, TOTAL_SPIN_DURATION);
+		}, REEL_SPIN_DURATION);
 	}
 
 	private stopSpin(): void {
@@ -123,9 +132,9 @@ export class SlotMachine {
 								AssetLoader.getTexture('ui/button_spin.png');
 							this.spinButton.interactive = true;
 						}
-					}, 500);
+					}, DELAY_BEFORE_WIN);
 				}
-			}, i * 400);
+			}, i * STOP_DELAY_BETWEEN_REELS);
 		}
 	}
 
@@ -137,13 +146,11 @@ export class SlotMachine {
 			sound.play('win');
 			console.log('Winner!');
 
-
 			if (this.winAnimation) {
 				this.winAnimation.visible = true;
-				this.winAnimation.state.setAnimation(0, 'start', false)
-			}
-			else {
-				console.warn(`Spine ${this.winAnimation} is null`)
+				this.winAnimation.state.setAnimation(0, 'start', false);
+			} else {
+				console.warn(`Spine ${this.winAnimation} is null`);
 			}
 		}
 	}
@@ -182,11 +189,18 @@ export class SlotMachine {
 				this.winAnimation!.state.addListener({
 					complete: () => {
 						this.winAnimation!.visible = false;
-					}
+					},
 				});
 			}
 		} catch (error) {
 			console.error('Error initializing spine animations:', error);
 		}
+	}
+
+	/**
+	 * Return if it's currently spinning.
+	 */
+	public get isSpinningStatus(): boolean {
+		return this.isSpinning;
 	}
 }

@@ -14,27 +14,27 @@ jest.mock('pixi.js', () => ({
 	Texture: jest.fn(),
 }));
 
-
-
 describe('AssetLoader', () => {
 	let loader: AssetLoader;
 
 	beforeAll(() => {
 		// Setup global mocks once
-		(Assets.loadBundle as jest.Mock).mockImplementation(async (bundle: string) => {
-			if (bundle === 'images' || bundle === 'symbols') {
-				return {
-					'ui/background.png': mockTexture,
-					'symbol/symbol1.png': mockTexture,
-				};
+		(Assets.loadBundle as jest.Mock).mockImplementation(
+			async (bundle: string) => {
+				if (bundle === 'images' || bundle === 'symbols') {
+					return {
+						'ui/background.png': mockTexture,
+						'symbol/symbol1.png': mockTexture,
+					};
+				}
+				if (bundle === 'spines') {
+					return {
+						'big-boom-h.json': mockSpine,
+					};
+				}
+				return {};
 			}
-			if (bundle === 'spines') {
-				return {
-					'big-boom-h.json': mockSpine,
-				};
-			}
-			return {};
-		});
+		);
 	});
 
 	beforeEach(() => {
@@ -70,7 +70,9 @@ describe('AssetLoader', () => {
 	});
 
 	test('should handle asset loading errors', async () => {
-		(Assets.loadBundle as jest.Mock).mockRejectedValueOnce(new Error('Loading failed'));
+		(Assets.loadBundle as jest.Mock).mockRejectedValueOnce(
+			new Error('Loading failed')
+		);
 		await expect(loader.loadAssets()).rejects.toThrow('Loading failed');
 	});
 
