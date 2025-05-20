@@ -26,6 +26,18 @@ describe('Reel', () => {
 			expect(symbol.y).toBe(0);
 		});
 	});
+	it('startSpin sets isSpinning to true and speed to SPIN_SPEED', () => {
+		reel.startSpin();
+		expect(reel['isSpinning']).toBe(true);
+		const SPIN_SPEED = 50;
+		expect(reel['speed']).toBe(SPIN_SPEED);
+	});
+	it('update does nothing if not spinning and speed is 0', () => {
+		const spy = jest.spyOn(reel['symbols'][0], 'x', 'set');
+		reel.update(1);
+		expect(spy).not.toHaveBeenCalled();
+		spy.mockRestore();
+	});
 	it('should update symbol positions while spinning', () => {
 		reel.startSpin();
 		const xBefore = reel['symbols'].map((s) => s.x);
@@ -67,5 +79,26 @@ describe('Reel', () => {
 		reel.update(1);
 
 		expect(reel['symbols'][0]).toBe(firstSymbol);
+	});
+	it('wraps multiple symbols if they cross the bound in a single update', () => {
+		reel.startSpin();
+		const rightBound = reel['symbols'].length * reel['symbolSize'] - reel['symbolSize'] / 2;
+		const firstSymbol = reel['symbols'][0];
+		const secondSymbol = reel['symbols'][1];
+		// Move two symbols past the bound
+		firstSymbol.x = rightBound + 10;
+		secondSymbol.x = rightBound + 20;
+		reel.update(1);
+		expect(reel['symbols'][0]).toBe(secondSymbol);
+		expect(reel['symbols'][1]).toBe(firstSymbol);
+	});
+	it('destroy cleans up all symbols and container', () => {
+		const destroySpies = reel['symbols'].map(symbol => jest.spyOn(symbol, 'destroy'));
+		const containerDestroySpy = jest.spyOn(reel.container, 'destroy');
+		reel.destroy();
+		destroySpies.forEach(spy => expect(spy).toHaveBeenCalled());
+		expect(containerDestroySpy).toHaveBeenCalled();
+		destroySpies.forEach(spy => spy.mockRestore());
+		containerDestroySpy.mockRestore();
 	});
 });

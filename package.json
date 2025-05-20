@@ -6,7 +6,7 @@
 	"scripts": {
 		"build": "webpack --mode production",
 		"start": "webpack serve --mode development",
-		"test": "jest --silent --coverage --detectLeaks --runInBand --logHeapUsage",
+		"test": "jest --silent --coverage --runInBand --logHeapUsage",
 		"test:e2e": "playwright test",
 		"format": "prettier --write . --ignore-path .prettierignore",
 		"lint": "eslint src --ext .ts"
