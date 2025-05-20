@@ -10,7 +10,7 @@ beforeEach(() => {
 	reel = new Reel(symbolCount, symbolSize, dummyTextures);
 });
 
-// memory clean
+// Memory clean
 afterEach(() => {
 	reel.container.destroy({ children: true });
 	dummyTextures.forEach((texture) => texture.destroy());
@@ -61,7 +61,8 @@ describe('Reel', () => {
 	});
 
 	it('should snap all symbols to snapPoints', () => {
-		reel['symbols'].forEach((symbol) => (symbol.x += 50)); // Move the positions
+		reel['symbols'].forEach((symbol) => (symbol.x += 50));
+		// Move the positions
 		reel['snapToGrid']();
 		reel['symbols'].forEach((symbol, i) => {
 			expect(symbol.x).toBeCloseTo(i * reel['symbolSize']);
